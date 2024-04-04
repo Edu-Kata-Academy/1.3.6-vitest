@@ -1,23 +1,33 @@
-export class LibraryCollection {
-  private collection: Map<string, { title: string; author: string }> = new Map();
+   type BookInfo = { id: string, title: string, author: string };
 
-  public addBook(title: string, author: string): void {
-    this.collection.set(title, { title, author });
-  }
+   export class LibraryCollection {
+     private collection: Map<string, BookInfo> = new Map();
+     private generateId() {
+       return '_' + Math.random().toString(36).slice(2, 9);
+     }
 
-  public removeBook(title: string): void {
-    this.collection.delete(title);
-  }
+     public addBook(title: string, author: string): string | Error {
+       if (Array.from(this.collection.values()).some(book => book.title === title)) {
+         throw new Error('Book already exists');
+       }
+       const id = this.generateId();
+       this.collection.set(id, { id, title, author });
+       return id;
+     }
 
-  public getBookInfo(title: string): { title: string; author: string } | null {
-    return this.collection.get(title) || null;
-  }
+     public removeBook(id: string): void {
+       this.collection.delete(id);
+     }
 
-  public getAllBooks(): Array<{ title: string; author: string }> {
-    return Array.from(this.collection.values());
-  }
+     public getBookInfo(id: string): BookInfo | null {
+       return this.collection.get(id) || null;
+     }
 
-  public countBooks(): number {
-    return this.collection.size;
-  }
-}
+     public getAllBooks(): BookInfo[] {
+       return Array.from(this.collection.values());
+     }
+
+     public getBooksCount(): number {
+       return this.collection.size;
+     }
+   }
